@@ -401,7 +401,7 @@
         <li><b>Install the Ultimate ASI Loader.</b> Download the x64 version from its
           <a href="${ASI_LOADER_URL}" target="_blank" rel="noopener">releases page</a> and put its <code>dinput8.dll</code>
           in the game folder, next to <code>DragonAgeInquisition.exe</code>.</li>
-        <li><b>Install the plugin.</b> Download <code>ThedasChronicle-1.0.0.zip</code> from the
+        <li><b>Install the plugin.</b> Download the latest <code>ThedasChronicle</code> zip from the
           <a href="${PLUGIN_URL}" target="_blank" rel="noopener">plugin's releases</a> and copy its <code>scripts</code> folder
           into the game folder.</li>
         <li><b>Export your world state.</b> Record your choices on this site, give your world state a name, and press
