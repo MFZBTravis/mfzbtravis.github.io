@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thedas Chronicle</title>
+<meta name="description" content="Record your Dragon Age world-state choices and export them as a JSON file. Unofficial fan tool.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#/">Thedas Chronicle</a>
+  <nav class="games" id="games" aria-label="Games"></nav>
+  <div class="ws">
+    <input id="ws-name" type="text" maxlength="60" placeholder="Name this world state" aria-label="World state name">
+    <input id="search" type="search" placeholder="Search choices…" aria-label="Search choices">
+  </div>
+  <div class="actions">
+    <button id="btn-import" class="btn">Import</button>
+    <button id="btn-export" class="btn primary">Export JSON</button>
+    <button id="btn-more" class="btn subtle" aria-haspopup="true">⋯</button>
+    <input id="file-import" type="file" accept=".json,application/json" hidden>
+  </div>
+</header>
+
+<div class="crumbs" id="crumbs"></div>
+<div class="notice" id="notice" hidden></div>
+<main id="view" class="view"></main>
+
+<footer class="footer">
+  Thedas Chronicle is an unofficial, non-commercial fan project. This website is not endorsed by or affiliated with EA or its licensors.
+  Dragon Age, its illustrations and heraldry are the property of Electronic Arts and BioWare, used under EA's fan content policy.
+  <a href="#" data-action="guide">Use in Inquisition</a> · <a href="#" data-action="about">About</a>
+</footer>
+
+<div class="modal-backdrop" id="modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <button class="modal-close" id="modal-close" aria-label="Close">×</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script src="emblems.js"></script>
+<script src="data/chronicle-data.js"></script>
+<script src="data/art-manifest.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
