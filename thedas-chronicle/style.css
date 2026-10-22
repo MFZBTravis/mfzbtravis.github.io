@@ -46,6 +46,7 @@ a { color: var(--gold); }
 .games button[aria-current="true"] { color: var(--gold-hi); border-color: var(--line); background: #ffffff08; }
 .games .count { font-family: var(--body); font-size: 12px; color: var(--gold); margin-left: 6px; }
 .ws { display: flex; gap: 8px; flex: 1 1 320px; min-width: 0; }
+.ws input.needs-name { border-color: var(--danger); box-shadow: 0 0 0 1px var(--danger); }
 .ws input { flex: 1; width: 0; min-width: 0; padding: 6px 10px; background: #0b0a09; border: 1px solid var(--line); border-radius: 3px; }
 .ws input:focus { outline: 1px solid var(--gold); }
 .actions { display: flex; gap: 8px; position: relative; }

@@ -407,7 +407,8 @@
         <li><b>Export your world state.</b> Record your choices on this site, give your world state a name, and press
           <b>Export JSON</b>. Put the downloaded <code>world-state.json</code> in the game folder, next to
           <code>DragonAgeInquisition.exe</code>.</li>
-        <li><b>Start a new game.</b> At character creation, choose to import a world state from the Keep. The game shows your
+        <li><b>Start a new game.</b> Wait about 30 seconds at the main menu first, while the game signs in to the Keep.
+          At character creation, choose to import a world state from the Keep. After about 15 seconds the game shows your
           custom world state and its "import successful" message.</li>
       </ol>
       <p>For the Steam version the game folder is usually
@@ -448,12 +449,19 @@
   }
 
   function exportJson() {
+    // The name is shown in Inquisition as the imported world state's name, so ask for one first.
+    if (!state.name.trim()) {
+      const field = $("ws-name");
+      field.classList.add("needs-name");
+      field.focus();
+      return notice("Give your world state a name before exporting. Inquisition shows it when you import.", true);
+    }
     const answers = Object.fromEntries(flagIds.map((f) => [f, state.answers[f]]));
     const doc = {
       format: FORMAT,
       version: 2,
       generator: "Thedas Chronicle",
-      name: state.name || "Untitled world state",
+      name: state.name.trim(),
       exported: new Date().toISOString(),
       answers,
       game: inquisitionFlags(answers),
@@ -570,6 +578,10 @@
   $("btn-more").addEventListener("click", () => toggleMenu(!document.querySelector(".menu")));
   $("ws-name").addEventListener("input", (e) => {
     state.name = e.target.value;
+    if (state.name.trim()) {
+      e.target.classList.remove("needs-name");
+      $("notice").hidden = true;
+    }
     save();
   });
   $("search").addEventListener("input", renderView);
