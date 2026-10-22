@@ -6,7 +6,7 @@
  *   flags    - {id: {game, section, question, context, canon, min, max, imported,
  *                    answers: [{value, label, description, emblem}], rules}}
  * Art: window.ART (data/art-manifest.js, built by tools/keep_art.py) maps picture ids to images: "<flag>-<value>"
- *      for answers (Dragon Age Keep illustrations, or the game's heraldry), plus home-<game> and hero-<game>.
+ *      for answers (Dragon Age Keep illustrations, or the game's heraldry), plus hero-<game>.
  *      Anything without an image falls back to window.Emblems (emblems.js) SVG.
  *
  * Rules: value V of flag F is allowed if no rule of F mentions V, or at least
@@ -200,11 +200,7 @@
       .join(" · ");
   }
 
-  const HOME_ART = {
-    dao: { motif: "dragon", mark: "none", tone: "good" },
-    da2: { motif: "gate", mark: "none", tone: "neutral" },
-    dai: { motif: "rift", mark: "radiant", tone: "neutral" },
-  };
+  const FULL_TITLE = { dao: "Dragon Age: Origins", da2: "Dragon Age II", dai: "Dragon Age: Inquisition" };
 
   function renderHome() {
     $("view").innerHTML = `<div class="intro">
@@ -216,9 +212,8 @@
         .map((g) => {
           const flags = gameFlags(g.id);
           return `<button class="home-card" data-game="${g.id}">
-            <div class="art" style="${bg(ART[`home-${g.id}`] || E.url(HOME_ART[g.id], g.id, 16 / 9, 1))}"></div>
-            <div class="body"><h3>${esc(g.label)}</h3>
-            <p>${flags.length} choices · ${changed(flags)} changed</p></div></button>`;
+            <h3>${esc(FULL_TITLE[g.id] || g.label)}</h3>
+            <p>${flags.length} choices · ${changed(flags)} changed</p></button>`;
         })
         .join("")}</div>`;
   }
@@ -407,8 +402,7 @@
         <li><b>Export your world state.</b> Record your choices on this site, give your world state a name, and press
           <b>Export JSON</b>. Put the downloaded <code>world-state.json</code> in the game folder, next to
           <code>DragonAgeInquisition.exe</code>.</li>
-        <li><b>Start a new game.</b> Wait about 30 seconds at the main menu first, while the game signs in to the Keep.
-          At character creation, choose to import a world state from the Keep. After about 15 seconds the game shows your
+        <li><b>Start a new game.</b> At character creation, choose to import a world state from the Keep. The game shows your
           custom world state and its "import successful" message.</li>
       </ol>
       <p>For the Steam version the game folder is usually
