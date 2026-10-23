@@ -48,7 +48,7 @@
   // The Warden's surname comes with their origin (dao_warden_background), the Inquisitor's with their race
   // (dai_inquisitor_race); Hawke's is always Hawke.
   const WARDEN_SURNAMES = ["Cousland", "Amell", "Mahariel", "Tabris", "Surana", "Aeducan", "Brosca"];
-  const INQUISITOR_SURNAMES = ["Cadash", "Lavellan", "Trevelyan", "Adaar"];
+  const INQUISITOR_SURNAMES = ["Trevelyan", "Lavellan", "Cadash", "Adaar"];
   const surname = (game) =>
     game === "da2"
       ? "Hawke"
