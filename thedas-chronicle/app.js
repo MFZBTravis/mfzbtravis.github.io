@@ -30,13 +30,36 @@
   // ---------------------------------------------------------------- state --
 
   const canonState = () => Object.fromEntries(flagIds.map((f) => [f, C.flags[f].canon]));
-  let state = { name: "", answers: canonState() };
+  // Heroes' first names: flavour only (Inquisition never reads them), kept in the export as "heroNames".
+  const HERO_NAMES = {
+    dao: { key: "warden", label: "The Warden's first name", example: "Lyna" },
+    da2: { key: "hawke", label: "Hawke's first name", example: "Marian" },
+    dai: { key: "inquisitor", label: "The Inquisitor's first name", example: "Ellana" },
+  };
+  let state = { name: "", answers: canonState(), heroNames: {} };
+
+  function takeHeroNames(src) {
+    const out = {};
+    for (const { key } of Object.values(HERO_NAMES))
+      if (src && typeof src[key] === "string" && src[key].trim()) out[key] = src[key].trim().slice(0, 40);
+    return out;
+  }
+  const heroName = (game) => (HERO_NAMES[game] ? state.heroNames[HERO_NAMES[game].key] || "" : "");
+  // The Warden's surname comes with their origin (dao_warden_background), the Inquisitor's with their race
+  // (dai_inquisitor_race); Hawke's is always Hawke.
+  const WARDEN_SURNAMES = ["Cousland", "Amell", "Mahariel", "Tabris", "Surana", "Aeducan", "Brosca"];
+  const INQUISITOR_SURNAMES = ["Cadash", "Lavellan", "Trevelyan", "Adaar"];
+  const surname = (game) =>
+    game === "da2"
+      ? "Hawke"
+      : (game === "dao" ? WARDEN_SURNAMES[state.answers.dao_warden_background] : INQUISITOR_SURNAMES[state.answers.dai_inquisitor_race]) || "";
 
   function load() {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
       if (!saved) return;
       state.name = typeof saved.name === "string" ? saved.name : "";
+      state.heroNames = takeHeroNames(saved.heroNames);
       for (const [f, v] of Object.entries(saved.answers || {})) if (f in C.flags && Number.isInteger(v)) state.answers[f] = v;
     } catch (e) {
       /* storage unavailable; start from canon */
@@ -194,10 +217,12 @@
   }
 
   function heroSummary(game) {
-    return gameOf(game)
+    const parts = gameOf(game)
       .heroFlags.filter((f) => /_(mf|background|race|class)$/.test(f))
-      .map((f) => label(f, state.answers[f]))
-      .join(" · ");
+      .map((f) => label(f, state.answers[f]));
+    const name = heroName(game);
+    if (name) parts.unshift(`${name} ${surname(game)}`.trim());
+    return parts.join(" · ");
   }
 
   const FULL_TITLE = { dao: "Dragon Age: Origins", da2: "Dragon Age II", dai: "Dragon Age: Inquisition" };
@@ -362,7 +387,17 @@
           ${F.context ? `<p class="q-context">${esc(F.context)}</p>` : ""}<div class="opts">${opts}</div></div>`;
       })
       .join("");
-    openModal(`<div class="q-head">${esc(g.label)} › Hero</div><h2 class="q-title" id="modal-title">${esc(g.hero)}</h2>${rows}`, {
+    const named = HERO_NAMES[game];
+    const nameRow = named
+      ? `<div class="choice-row"><h3>${esc(named.label)}</h3>
+          <p class="q-context">Just for your own record: ${
+            game === "dai" ? "the game doesn't read it." : "Inquisition never uses it."
+          } It's saved in your exported file.</p>
+          <div class="hero-name-row"><input class="hero-name" type="text" maxlength="40" data-hero-name="${named.key}" value="${esc(heroName(game))}"
+            placeholder="e.g. ${esc(named.example)}" aria-label="${esc(named.label)}">
+            <span class="surname">${esc(surname(game))}</span></div></div>`
+      : "";
+    openModal(`<div class="q-head">${esc(g.label)} › Hero</div><h2 class="q-title" id="modal-title">${esc(g.hero)}</h2>${nameRow}${rows}`, {
       kind: "hero",
       game,
     });
@@ -405,12 +440,14 @@
         <li><b>Start a new game.</b> At character creation, choose to import a world state from the Keep. The game shows your
           custom world state and its "import successful" message.</li>
       </ol>
-      <p>For the Steam version the game folder is usually
-      <code>C:\\Program Files (x86)\\Steam\\steamapps\\common\\Dragon Age Inquisition</code>.
+      <p>The game folder is usually <code>C:\\Program Files (x86)\\Steam\\steamapps\\common\\Dragon Age Inquisition</code>
+      (Steam) or <code>C:\\Program Files\\EA Games\\Dragon Age Inquisition</code> (EA app).
       To change your world state, export a new file, replace the old one and start a new game.</p>
-      <p>The plugin also makes the golden nug unlock everything it can sync, and stops the game waiting on EA's servers.
+      <p>The plugin also stands in for EA's servers, so the game never waits on them, and makes the golden nug unlock
+      everything it can sync. To have the golden nug unlock only what you've synced in your own playthroughs, like the
+      original Keep, set <code>Mode=earned</code> in <code>scripts\\ThedasChronicleHook.ini</code>.
       If something doesn't work, check <code>scripts\\ThedasChronicleHook.log</code> in the game folder.
-      Tested with the Steam version of Dragon Age: Inquisition on PC.
+      Works with the Steam and EA app versions of Dragon Age: Inquisition on PC.
       Source code and full instructions: <a href="${REPO_URL}" target="_blank" rel="noopener">github.com/MFZBTravis/ThedasChronicle</a>.</p></div>`,
       { kind: "guide" }
     );
@@ -457,6 +494,7 @@
       generator: "Thedas Chronicle",
       name: state.name.trim(),
       exported: new Date().toISOString(),
+      ...(Object.keys(state.heroNames).length ? { heroNames: { ...state.heroNames } } : {}),
       answers,
       game: inquisitionFlags(answers),
     };
@@ -494,6 +532,7 @@
       applied++;
     }
     if (typeof doc.name === "string") state.name = doc.name;
+    state.heroNames = takeHeroNames(doc.heroNames);
     commit(answers);
     const conflicts = invalidFlags(answers).length;
     notice(
@@ -577,6 +616,15 @@
       $("notice").hidden = true;
     }
     save();
+  });
+  document.addEventListener("input", (e) => {
+    const key = e.target.dataset.heroName;
+    if (!key) return;
+    const v = e.target.value.trim();
+    if (v) state.heroNames[key] = v;
+    else delete state.heroNames[key];
+    save();
+    renderView();
   });
   $("search").addEventListener("input", renderView);
   $("btn-export").addEventListener("click", exportJson);

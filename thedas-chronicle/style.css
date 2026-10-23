@@ -158,6 +158,10 @@ a { color: var(--gold); }
 .choice-row { margin-bottom: 18px; }
 .choice-row h3 { font-size: 15px; color: var(--gold); margin-bottom: 8px; }
 .choice-row .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.hero-name-row { display: flex; align-items: center; gap: 10px; }
+.hero-name-row .surname { font-family: var(--display); color: var(--gold-hi); letter-spacing: .04em; }
+.hero-name { flex: 1; min-width: 0; max-width: 320px; padding: 7px 10px; background: #0b0a09; border: 1px solid var(--line); border-radius: 3px; }
+.hero-name:focus { outline: 1px solid var(--gold); }
 .opt { padding: 7px 14px; cursor: pointer; border-radius: 3px; background: var(--panel-2); border: 1px solid var(--line); }
 .opt:hover { border-color: var(--gold); }
 .opt.selected { border-color: var(--gold); color: var(--gold-hi); background: #3a2d1d; }
