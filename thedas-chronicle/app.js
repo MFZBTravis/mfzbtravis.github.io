@@ -126,25 +126,32 @@
   }
 
   /* What else must change if `flag` becomes `value`: satisfy the new value's own
-   * rules (fewest changes, preferring canon), then repeatedly re-pick answers that
-   * became invalid (canon first, then the lowest valid value). Answers that were
-   * already inconsistent before the change are left alone. */
+   * rules (fewest changes, preferring canon), then the rules of every answer that
+   * changed for it, and so on down the chain (romancing Sera makes her a true friend,
+   * which means she stayed to the end). Then repeatedly re-pick answers that became
+   * invalid (canon first, then the lowest valid value). Answers that were already
+   * inconsistent before the change are left alone. */
   function propose(flag, value) {
     const before = state.answers;
     const preInvalid = new Set(invalidFlags(before));
     const next = { ...before, [flag]: value };
     const pinned = new Set([flag]);
 
-    if (!valid(flag, value, next)) {
+    const queue = [flag];
+    for (let steps = 0; queue.length && steps < 200; steps++) {
+      const f = queue.shift();
+      if (valid(f, next[f], next)) continue;
       let best = null;
-      for (const r of C.flags[flag].rules.filter((r) => r.value === value)) {
+      for (const r of C.flags[f].rules.filter((r) => r.value === next[f])) {
         const unmet = r.when.filter(([q, lo, hi]) => !(next[q] >= lo && next[q] <= hi));
+        if (unmet.some(([q]) => pinned.has(q))) continue;  // would undo an answer already decided
         if (!best || unmet.length < best.length) best = unmet;
       }
       for (const [q, lo, hi] of best || []) {
         const c = C.flags[q].canon;
         next[q] = c >= lo && c <= hi ? c : lo;
         pinned.add(q);
+        queue.push(q);
       }
     }
 
