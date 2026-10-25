@@ -137,22 +137,27 @@
     const next = { ...before, [flag]: value };
     const pinned = new Set([flag]);
 
+    // Every answer in the chain is checked, including ones that already fit, so a contradiction further down
+    // (say "Sera: a true friend" but "never recruited") is repaired too.
     const queue = [flag];
-    for (let steps = 0; queue.length && steps < 200; steps++) {
+    const checked = new Set();
+    while (queue.length) {
       const f = queue.shift();
-      if (valid(f, next[f], next)) continue;
+      if (checked.has(f)) continue;
+      checked.add(f);
       let best = null;
       for (const r of C.flags[f].rules.filter((r) => r.value === next[f])) {
         const unmet = r.when.filter(([q, lo, hi]) => !(next[q] >= lo && next[q] <= hi));
         if (unmet.some(([q]) => pinned.has(q))) continue;  // would undo an answer already decided
-        if (!best || unmet.length < best.length) best = unmet;
+        if (!best || unmet.length < best.unmet.length) best = { rule: r, unmet };
       }
-      for (const [q, lo, hi] of best || []) {
+      if (!best) continue;
+      for (const [q, lo, hi] of best.unmet) {
         const c = C.flags[q].canon;
         next[q] = c >= lo && c <= hi ? c : lo;
         pinned.add(q);
-        queue.push(q);
       }
+      for (const [q] of best.rule.when) queue.push(q);
     }
 
     for (let iter = 0; iter < 50; iter++) {
