@@ -89,10 +89,16 @@
     return E.url(a ? a.emblem : { motif: "figure" }, C.flags[f].game, w, h);
   }
   // Goes inside a double-quoted style="" attribute.
-  // Heraldry (SVG) sits centred on a dark field; illustrations fill the tile.
+  // Heraldry (SVG) sits centred on its own field; illustrations fill the tile.
+  // Hawke's field is the Dragon Age II splash screen's parchment; the Inquisitor's is black.
+  const FIELD = {
+    "hawke.svg": "radial-gradient(circle at 50% 40%, #f7f3ea, #ece7dc 55%, #e1d9cd)",
+    "inquisition.svg": "#000",
+  };
+  const field = (url) => FIELD[url.split("/").pop().split("?")[0]] || "#141b2e";
   const bg = (url) =>
     /\.svg$/.test(url)
-      ? `background:#141b2e url('${url}') center 38% / auto 62% no-repeat`
+      ? `background:url('${url}') center 38% / auto 62% no-repeat, ${field(url)}`
       : `background-image:url('${url}')`;
 
   function where(f) {
