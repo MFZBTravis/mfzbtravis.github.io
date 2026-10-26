@@ -464,7 +464,12 @@
       <p>The plugin also stands in for EA's servers, so the game never waits on them, and makes the golden nug unlock
       everything it can sync. To have the golden nug unlock only what you've synced in your own playthroughs, like the
       original Keep, set <code>Mode=earned</code> in <code>scripts\\ThedasChronicleHook.ini</code>.
-      If something doesn't work, check <code>scripts\\ThedasChronicleHook.log</code> in the game folder.
+      If something doesn't work, check <code>scripts\\ThedasChronicleHook.log</code> in the game folder.</p>
+      <p><b>Claim your free Keep rewards now.</b> The Dragon Age Keep website still gives Inquisition's Keep rewards
+      (items, mounts and the Deluxe and Inquisitor Edition content) to your EA account. Once claimed they stay on your
+      account, even if the website closes. Sign in at <a href="https://dragonagekeep.com/en_US/career/#product/dai"
+      target="_blank" rel="noopener">dragonagekeep.com</a>, open Career for Inquisition and request each unlock.</p>
+      <p>
       Works with the Steam and EA app versions of Dragon Age: Inquisition on PC.
       Source code and full instructions: <a href="${REPO_URL}" target="_blank" rel="noopener">github.com/MFZBTravis/ThedasChronicle</a>.</p></div>`,
       { kind: "guide" }
