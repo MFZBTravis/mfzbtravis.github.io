@@ -497,7 +497,7 @@
     const out = {};
     for (const f of ex.direct) out[f] = answers[f];
     for (const [f, rule] of Object.entries(ex.rules)) {
-      out[f] = rule.map ? rule.map[String(answers[rule.from])] : test(rule) ? 1 : 0;
+      out[f] = "value" in rule ? rule.value : rule.map ? rule.map[String(answers[rule.from])] : test(rule) ? 1 : 0;
     }
     return out;
   }
